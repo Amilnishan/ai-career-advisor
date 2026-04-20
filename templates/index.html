@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Career Advisor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>AI Career Advisor</h1>
+
+    <form method="POST" id="ai-form">
+        <input type="text" name="name" id="name-input" placeholder="Enter your name" required>
+        <input type="text" name="goal" id="goal-input" placeholder="Enter your goal" required>
+
+        <div class="button-group">
+            <button type="submit" name="action" value="advice" id="btn-advice">Get Advice</button>
+            <button type="submit" name="action" value="skills" id="btn-skills">Get Skills</button>
+            <button type="button" id="btn-clear" onclick="clearForm()">Clear</button>
+        </div>
+    </form>
+
+    <div id="loading" class="loading-text" style="display: none;">Generating response...</div>
+
+    {% if result %}
+    <div class="result-box" id="result-box">
+        <h3>Result:</h3>
+        <div id="result-content">{{ result | safe }}</div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Prevent form resubmission when the page is refreshed
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    // Handle form submission to show loading indicator
+    document.getElementById('ai-form').addEventListener('submit', function() {
+        // Disable buttons after a tiny delay so the browser can send the button's value
+        setTimeout(function() {
+            document.getElementById('btn-advice').disabled = true;
+            document.getElementById('btn-skills').disabled = true;
+            document.getElementById('btn-clear').disabled = true;
+        }, 10);
+        
+        // Show loading indicator
+        document.getElementById('loading').style.display = 'block';
+        
+        // Hide the previous result box immediately if it exists
+        const resultBox = document.getElementById('result-box');
+        if (resultBox) {
+            resultBox.style.display = 'none';
+        }
+    });
+
+    // Handle "Clear" button without reloading the page
+    function clearForm() {
+        document.getElementById('name-input').value = '';
+        document.getElementById('goal-input').value = '';
+        
+        const resultBox = document.getElementById('result-box');
+        if (resultBox) {
+            resultBox.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
